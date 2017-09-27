@@ -12,6 +12,7 @@ class Recorder:
         self.client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this
         self.refresh = 15.0
         self.quality = "best"
+        self.username = ""
         self.root_path = os.path.abspath('')
         self.recorded_path = os.path.join(self.root_path, "recorded", self.username)
         self.processed_path = os.path.join(self.root_path, "processed", self.username)
