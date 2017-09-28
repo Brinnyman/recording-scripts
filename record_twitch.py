@@ -14,13 +14,12 @@ class Recorder:
         self.quality = "best"
         self.username = ""
         self.root_path = os.path.abspath('')
-        self.recorded_path = os.path.join(self.root_path, "recorded", self.username)
-        self.processed_path = os.path.join(self.root_path, "processed", self.username)
 
     def run(self):
-        pass
+        self.recorded_path = os.path.join(self.root_path, "recorded", self.username)
         if(os.path.isdir(self.recorded_path) is False):
             os.makedirs(self.recorded_path)
+        self.processed_path = os.path.join(self.root_path, "processed", self.username)
         if(os.path.isdir(self.processed_path) is False):
             os.makedirs(self.processed_path)
 
