@@ -8,7 +8,7 @@ import getopt
 class Recorder:
     def __init__(self):
         self.client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this
-        self.root_path = os.path.abspath('/Users/ShadowBlade/Development')
+        self.root_path = os.path.abspath('')
         self.quality = "best"
 
     def get_vod(self):
