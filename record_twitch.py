@@ -85,26 +85,26 @@ class Recorder:
             elif status == 0:
                 print(self.username, "online. Stream recording in session.")
 
-            filename = self.username + "_" + datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss") + ".mp4"
-            filename = "".join(x for x in filename if x.isalnum() or x in ["-", "_", "."])
+                filename = self.username + "_" + datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss") + ".mp4"
+                filename = "".join(x for x in filename if x.isalnum() or x in ["-", "_", "."])
 
-            recorded_filename = os.path.join(self.recorded_path, filename)
-            processed_filename = os.path.join(self.processed_path, filename)
+                recorded_filename = os.path.join(self.recorded_path, filename)
+                processed_filename = os.path.join(self.processed_path, filename)
 
-            subprocess.call(['streamlink', 'twitch.tv/' + self.username, self.quality, "-o", recorded_filename])
+                subprocess.call(['streamlink', 'twitch.tv/' + self.username, self.quality, "-o", recorded_filename])
 
-            print("Recording stream is done.")
-            if(os.path.exists(recorded_filename) is True):
-                print("Fixing video file.")
-                try:
-                    subprocess.call(['ffmpeg', '-err_detect', 'ignore_err', '-i', recorded_filename, '-c', 'copy', processed_filename])
-                    os.remove(recorded_filename)
-                except Exception as e:
-                    print(e)
-            else:
-                print("Skip fixing. File not found.")
+                print("Recording stream is done.")
+                if(os.path.exists(recorded_filename) is True):
+                    print("Fixing video file.")
+                    try:
+                        subprocess.call(['ffmpeg', '-err_detect', 'ignore_err', '-i', recorded_filename, '-c', 'copy', processed_filename])
+                        os.remove(recorded_filename)
+                    except Exception as e:
+                        print(e)
+                else:
+                    print("Skip fixing. File not found.")
 
-            time.sleep(self.refresh)
+                time.sleep(self.refresh)
 
 
 def main(argv):
