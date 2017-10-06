@@ -131,6 +131,7 @@ class Recorder:
                 print(self.name, "online. Stream recording in session.")
 
                 recorded_filename, processed_filename = self.create_files(self.name, datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
+                self.url = 'twitch.tv/' + self.name
                 self.record(self.url, recorded_filename)
                 self.clean_files(recorded_filename, processed_filename)
 
@@ -154,14 +155,25 @@ class Recorder:
 def main(argv):
     """Exectute command line options."""
     recorder = Recorder()
-    print('ARGV      :', sys.argv[1:])
-    options, remainder = getopt.getopt(sys.argv[1:], 'n:u:t:v:', ['name=',
-                                                                  'url=',
-                                                                  'type=',
-                                                                  'vod='])
-    print('OPTIONS   :', options)
+    usage = 'test.py -i <inputfile> -o <outputfile>\n'
+    usage += 'example recording twitch stream: recorder.py -name lirik\n'
+    usage += 'example recording twitch vod: recorder.py -name lirik -t vod -v 13245678\n'
+    usage += 'example fixing recorded folder: recorder.py -name lirik -t clean'
+
+    try:
+        options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:', ['name=',
+                                                                       'url=',
+                                                                       'type=',
+                                                                       'vod='])
+    except getopt.GetoptError as e:
+        print(usage)
+        sys.exit(2)
+
     for opt, arg in options:
-        if opt in ('-n', '--name'):
+        if opt == '-h':
+            print(usage)
+            sys.exit()
+        elif opt in ('-n', '--name'):
             recorder.name = arg
         elif opt in ('-u', '--url'):
             recorder.url = arg
