@@ -73,7 +73,9 @@ class Recorder:
         except Exception as e:
             print(e)
 
-        if self.type == 'twitch':
+        if self.type == 'clean':
+            return
+        elif self.type == 'twitch':
             self.record_twitch_stream()
         elif self.type == 'vod':
             self.record_twitch_vod()
