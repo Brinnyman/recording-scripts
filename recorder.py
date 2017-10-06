@@ -10,6 +10,7 @@ import time
 class Recorder:
     def __init__(self):
         self.twitch_client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this
+        self.ffmpeg_path = "ffmpeg"
         self.refresh = 15.0
         self.quality = "best"
         self.name = ""
@@ -43,7 +44,7 @@ class Recorder:
         if(os.path.exists(recorded_filename) is True):
             try:
                 print("Fixing video file.")
-                subprocess.call(['ffmpeg', '-err_detect', 'ignore_err', '-i', recorded_filename, '-c', 'copy', processed_filename])
+                subprocess.call([self.ffmpeg_path, '-err_detect', 'ignore_err', '-i', recorded_filename, '-c', 'copy', processed_filename])
                 print("Fixed video file.")
                 os.remove(recorded_filename)
             except Exception as e:
