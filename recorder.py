@@ -12,11 +12,13 @@ class Recorder:
         self.twitch_client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this
         self.refresh = 15.0
         self.quality = "best"
-        self.name = ""
-        self.url = ""
-        self.type = "twitch"
-        self.vodid = ""
-        self.root_path = os.path.abspath('')
+        self.name = ""  # recording directory and twitch username
+        self.url = ""  # youtube-live-url
+        self.type = "twitch"  # default is 'twitch', other options are: youtube, vod, repair
+        self.vodid = ""  # twitch vod id
+        self.root_path = os.path.abspath('')  # recording path
+        self.ffmpeg_path = 'ffmpeg'  # path to ffmpeg executable
+        self.streamlink_path = 'streamlink'  # path to streamlink executable
 
     def setup(self):
         self.recorded_path = os.path.join(self.root_path, "recorded", self.name)
@@ -39,41 +41,41 @@ class Recorder:
         return recorded_filename, processed_filename
 
     def clean_files(self, recorded_filename, processed_filename):
-        print('Check if recorded file needs to be fixed.')
+        print('Check if recorded file needs to be repaired.')
         if(os.path.exists(recorded_filename) is True):
             try:
-                print("Fixing video file.")
-                subprocess.call(['ffmpeg', '-err_detect', 'ignore_err', '-i', recorded_filename, '-c', 'copy', processed_filename])
-                print("Fixed video file.")
+                print("Repair video file.")
+                subprocess.call([self.ffmpeg_path, '-err_detect', 'ignore_err', '-i', recorded_filename, '-c', 'copy', processed_filename])
+                print("Repaired video file.")
                 os.remove(recorded_filename)
             except Exception as e:
                 print(e)
         else:
-            print("Skip fixing. File not found.")
+            print("Skip repairing. File not found.")
 
     def record(self, url, filename):
         print("Recording in session.")
-        subprocess.call(['streamlink', url, self.quality, "-o", filename])
+        subprocess.call([self.streamlink_path, url, self.quality, "-o", filename])
         print("Recording is done.")
 
     def run(self):
         self.setup()
-        print('Check if previously recorded files need to be fixed.')
+        print('Check if previously recorded files need to be repaired.')
         try:
             video_list = [f for f in os.listdir(self.recorded_path) if os.path.isfile(os.path.join(self.recorded_path, f))]
             if(len(video_list) > 0):
-                print('Fixing previously recorded files.')
+                print('Repairing previously recorded files.')
             for f in video_list:
                 recorded_filename = os.path.join(self.recorded_path, f)
                 processed_filename = os.path.join(self.processed_path, f)
                 if(os.path.exists(recorded_filename) is True):
                     self.clean_files(recorded_filename, processed_filename)
                 else:
-                    print("Skip fixing. File not found.")
+                    print("Skip repairing. File not found.")
         except Exception as e:
             print(e)
 
-        if self.type == 'clean':
+        if self.type == 'repair':
             return
         elif self.type == 'twitch':
             self.record_twitch_stream()
@@ -155,10 +157,20 @@ class Recorder:
 def main(argv):
     """Exectute command line options."""
     recorder = Recorder()
-    usage = 'test.py -i <inputfile> -o <outputfile>\n'
-    usage += 'example recording twitch stream: recorder.py -name lirik\n'
-    usage += 'example recording twitch vod: recorder.py -name lirik -t vod -v 13245678\n'
-    usage += 'example fixing recorded folder: recorder.py -name lirik -t clean'
+
+    usage = 'Usage: recorder.py [options]\n'
+    usage += '\n'
+    usage += 'Options:\n'
+    usage += '-h, --help prints this message\n'
+    usage += '-n, --name recording directory and twitch username\n'
+    usage += '-t, --type select the type of recording <twitch, youtube, vod, repair>\n'
+    usage += '-u, --url youtube-live url\n'
+    usage += '-v, --vod twitch vod id code\n'
+    usage += '\n'
+    usage += 'Examples:\n'
+    usage += 'Recording twitch stream:\nrecorder.py -name lirik\n'
+    usage += 'Recording twitch vod:\nrecorder.py -name lirik -t vod -v 13245678\n'
+    usage += 'Repairing recorded folder:\nrecorder.py -name lirik -t repair'
 
     try:
         options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:', ['name=',
