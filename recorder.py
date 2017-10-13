@@ -10,6 +10,7 @@ import time
 class Recorder:
     def __init__(self):
         self.twitch_client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this
+        self.ffmpeg_path = "ffmpeg"
         self.refresh = 15.0
         self.quality = "best"
         self.name = ""  # recording directory and twitch username
@@ -44,9 +45,15 @@ class Recorder:
         print('Check if recorded file needs to be repaired.')
         if(os.path.exists(recorded_filename) is True):
             try:
+<<<<<<< HEAD
                 print("Repair video file.")
                 subprocess.call([self.ffmpeg_path, '-err_detect', 'ignore_err', '-i', recorded_filename, '-c', 'copy', processed_filename])
                 print("Repaired video file.")
+=======
+                print("Fixing video file.")
+                subprocess.call([self.ffmpeg_path, '-err_detect', 'ignore_err', '-i', recorded_filename, '-c', 'copy', processed_filename])
+                print("Fixed video file.")
+>>>>>>> 11e8c7d51a1c369b1066afdddb335ea3b9aa769f
                 os.remove(recorded_filename)
             except Exception as e:
                 print(e)
