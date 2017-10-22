@@ -168,9 +168,9 @@ def main(argv):
     usage += '-v, --vod twitch vod id code\n'
     usage += '\n'
     usage += 'Examples:\n'
-    usage += 'Recording twitch stream:\nrecorder.py -name lirik\n'
-    usage += 'Recording twitch vod:\nrecorder.py -name lirik -t vod -v 13245678\n'
-    usage += 'Repairing recorded folder:\nrecorder.py -name lirik -t repair'
+    usage += 'Recording twitch stream:\nrecorder.py -n lirik\n'
+    usage += 'Recording twitch vod:\nrecorder.py -n lirik -t vod -v 13245678\n'
+    usage += 'Repairing recorded folder:\nrecorder.py -n lirik -t repair'
 
     try:
         options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:', ['name=',
