@@ -16,14 +16,13 @@ $ python3.5 recorder.py [options]
 ```
 
 ```bash
-Usage: recorder.py [options]
-
 Options:
--h, --help  prints this message
--n, --name  recording directory and twitch username
--t, --type  twitch, youtube, vod, repair
--u, --url   youtube-live url
--v, --vod   twitch vod id code
+-h, --help   prints this message
+-n, --name   recording directory and twitch username
+-t, --type   twitch, youtube, vod, repair
+-u, --url    youtube-live url
+-v, --vod    twitch vod id code
+-o, --output filepath location
 ```
 
 ## Configuration
