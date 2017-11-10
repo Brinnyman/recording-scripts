@@ -166,6 +166,7 @@ def main(argv):
     usage += '-t, --type select the type of recording <twitch, youtube, vod, repair>\n'
     usage += '-u, --url youtube-live url\n'
     usage += '-v, --vod twitch vod id code\n'
+    usage += '-o, --output filepath location\n'
     usage += '\n'
     usage += 'Examples:\n'
     usage += 'Recording twitch stream:\nrecorder.py -n username\n'
@@ -173,10 +174,11 @@ def main(argv):
     usage += 'Repairing recorded folder:\nrecorder.py -n username -t repair'
 
     try:
-        options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:', ['name=',
-                                                                       'url=',
-                                                                       'type=',
-                                                                       'vod='])
+        options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:o:', ['name=',
+                                                                         'url=',
+                                                                         'type=',
+                                                                         'vod=',
+                                                                         'output='])
     except getopt.GetoptError as e:
         print(usage)
         sys.exit(2)
@@ -193,6 +195,8 @@ def main(argv):
             recorder.type = arg
         elif opt in ('-v', '--vod'):
             recorder.vodid = arg
+        elif opt in ('-o', '--output'):
+            recorder.root_path = arg
 
     recorder.run()
 
