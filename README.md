@@ -19,11 +19,11 @@ $ python3.5 recorder.py [options]
 Usage: recorder.py [options]
 
 Options:
--h, --help prints this message
--n, --name <recording directory and twitch username>
--t, --type <twitch, youtube, vod, repair>
--u, --url <youtube-live url>
--v, --vod <twitch vod id code>
+-h, --help  prints this message
+-n, --name  recording directory and twitch username
+-t, --type  twitch, youtube, vod, repair
+-u, --url   youtube-live url
+-v, --vod   twitch vod id code
 ```
 
 ## Configuration
@@ -39,9 +39,9 @@ self.streamlink_path = ''  # path to streamlink executable
 ```bash
 Examples:
 Recording twitch stream:
-recorder.py -name lirik
+recorder.py -n lirik
 Recording twitch vod:
-recorder.py -name lirik -t vod -v 13245678
+recorder.py -n lirik -t vod -v 13245678
 Repairing recorded folder:
-recorder.py -name lirik -t repair
+recorder.py -n lirik -t repair
 ```
