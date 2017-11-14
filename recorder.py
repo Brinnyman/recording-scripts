@@ -53,9 +53,10 @@ class Recorder:
         else:
             print("Skip repairing. File not found.")
 
-    def record(self, url, filename):
+    def record(self, url, filename, command):
         print("Recording in session.")
-        subprocess.call([self.streamlink_path, url, self.quality, "-o", filename])
+        print(self.streamlink_path, url, self.quality, "-o", filename, command)
+        subprocess.call([self.streamlink_path, url, self.quality, "-o", filename, command])
         print("Recording is done.")
 
     def run(self):
@@ -134,7 +135,7 @@ class Recorder:
 
                 recorded_filename, processed_filename = self.create_files(self.name, datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
                 self.url = 'twitch.tv/' + self.name
-                self.record(self.url, recorded_filename)
+                self.record(self.url, recorded_filename, "--twitch-disable-hosting")
                 self.clean_files(recorded_filename, processed_filename)
 
                 time.sleep(self.refresh)
