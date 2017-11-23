@@ -11,20 +11,21 @@ class Recorder:
     def __init__(self):
         self.twitch_client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this
         self.refresh = 15.0
-        self.quality = "best"
-        self.name = ""  # recording directory and twitch username
+        self.name = ""  # recording directory name and twitch username
+        self.type = "twitch"  # recording type, default is 'twitch' [youtube, vod, repair]
         self.url = ""  # youtube-live-url
-        self.type = "twitch"  # default is 'twitch', other options are: youtube, vod, repair
         self.vodid = ""  # twitch vod id
-        self.root_path = os.path.abspath('')  # recording path
+        self.quality = "best"  # recording quality, default is 'best'
+        self.root_path = ""  # recording path
+        self.command = ""  # streamlink commands
         self.ffmpeg_path = 'ffmpeg'  # path to ffmpeg executable
         self.streamlink_path = 'streamlink'  # path to streamlink executable
 
     def setup(self):
-        self.recorded_path = os.path.join(self.root_path, "recorded", self.name)
+        self.recorded_path = os.path.join(os.path.abspath(self.root_path), "recorded", self.name)
         if(os.path.isdir(self.recorded_path) is False):
             os.makedirs(self.recorded_path)
-        self.processed_path = os.path.join(self.root_path, "processed", self.name)
+        self.processed_path = os.path.join(os.path.abspath(self.root_path), "processed", self.name)
         if(os.path.isdir(self.processed_path) is False):
             os.makedirs(self.processed_path)
 
@@ -61,8 +62,10 @@ class Recorder:
 
     def run(self):
         self.setup()
-        print('Check if previously recorded files need to be repaired.')
+        print('Start recorder')
+
         try:
+            print('Check if there are files in the recorded folder.')
             video_list = [f for f in os.listdir(self.recorded_path) if os.path.isfile(os.path.join(self.recorded_path, f))]
             if(len(video_list) > 0):
                 print('Repairing previously recorded files.')
@@ -116,6 +119,7 @@ class Recorder:
         return info
 
     def record_twitch_stream(self):
+        self.command = "--twitch-disable-hosting"
         while True:
             status = self.check_twitch_stream()
             if status == 2:
@@ -135,7 +139,7 @@ class Recorder:
 
                 recorded_filename, processed_filename = self.create_files(self.name, datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
                 self.url = 'twitch.tv/' + self.name
-                self.record(self.url, recorded_filename, "--twitch-disable-hosting")
+                self.record(self.url, recorded_filename, self.command)
                 self.clean_files(recorded_filename, processed_filename)
 
                 time.sleep(self.refresh)
@@ -144,13 +148,13 @@ class Recorder:
         info = self.check_twitch_vod()
         recorded_filename, processed_filename = self.create_files(info['channel']['name'], info['published_at'])
         self.url = 'twitch.tv/videos/' + self.vodid
-        self.record(self.url, recorded_filename)
+        self.record(self.url, recorded_filename, self.command)
         self.clean_files(recorded_filename, processed_filename)
 
     def record_youtube_stream(self):
         while True:
-            recorded_filename, processed_filename = self.create_files('yt_' + self.name, datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
-            self.record(self.url, recorded_filename)
+            recorded_filename, processed_filename = self.create_files('_' + self.name, datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
+            self.record(self.url, recorded_filename, self.command)
             self.clean_files(recorded_filename, processed_filename)
             time.sleep(self.refresh)
 
@@ -165,21 +169,28 @@ def main(argv):
     usage += '-h, --help prints this message\n'
     usage += '-n, --name recording directory and twitch username\n'
     usage += '-t, --type select the type of recording <twitch, youtube, vod, repair>\n'
-    usage += '-u, --url youtube-live url\n'
+    usage += '-u, --url youtube url\n'
     usage += '-v, --vod twitch vod id code\n'
-    usage += '-o, --output filepath location\n'
+    usage += '-q, --quality quality file\n'
+    usage += '-p, --path filepath location\n'
+    usage += '-c, --command streamlink command\n'
     usage += '\n'
     usage += 'Examples:\n'
     usage += 'Recording twitch stream:\nrecorder.py -n username\n'
+    usage += 'Recording twitch stream:\nrecorder.py -n username -p /recording\n'
+    usage += 'Recording twitch stream:\nrecorder.py -n username -c --twitch-disable-hosting\n'
     usage += 'Recording twitch vod:\nrecorder.py -n username -t vod -v 13245678\n'
-    usage += 'Repairing recorded folder:\nrecorder.py -n username -t repair'
+    usage += 'example recording youtube stream: recorder.py -n username -t youtube -u url -q 720p\n'
+    usage += 'Repairing recorded files:\nrecorder.py -n username -t repair'
 
     try:
-        options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:o:', ['name=',
-                                                                         'url=',
-                                                                         'type=',
-                                                                         'vod=',
-                                                                         'output='])
+        options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:q:p:c:', ['name=',
+                                                                             'url=',
+                                                                             'type=',
+                                                                             'vod=',
+                                                                             'quality=',
+                                                                             'path=',
+                                                                             'command='])
     except getopt.GetoptError as e:
         print(usage)
         sys.exit(2)
@@ -196,8 +207,12 @@ def main(argv):
             recorder.type = arg
         elif opt in ('-v', '--vod'):
             recorder.vodid = arg
-        elif opt in ('-o', '--output'):
+        elif opt in ('-q', '--quality'):
+            recorder.quality = arg
+        elif opt in ('-p', '--path'):
             recorder.root_path = arg
+        elif opt in ('-c', '--command'):
+            recorder.command = arg
 
     recorder.run()
 
