@@ -17,18 +17,20 @@ $ python3.5 recorder.py [options]
 
 ```bash
 Options:
--h, --help   prints this message
--n, --name   recording directory and twitch username
--t, --type   twitch, youtube, vod, repair
--u, --url    youtube-live url
--v, --vod    twitch vod id code
--o, --output filepath location
+-h, --help    prints this message
+-n, --name    recording directory and twitch username
+-t, --type    recording type, default is twitch <twitch, youtube, vod, repair>
+-u, --url     youtube-live url
+-v, --vod     twitch vod id
+-q, --quality recording quality, default is best <best, high, low, medium, mobile, source, worst>
+-p, --path    recording path
+-c, --command streamlink command
 ```
 
 ## Configuration
 
 ```
-self.root_path = os.path.abspath('')  # recording path
+self.root_path = ''  # recording path
 self.ffmpeg_path = ''  # path to ffmpeg executable
 self.streamlink_path = ''  # path to streamlink executable
 ```
@@ -38,9 +40,11 @@ self.streamlink_path = ''  # path to streamlink executable
 ```bash
 Examples:
 Recording twitch stream:
-recorder.py -n lirik
+recorder.py -n username -t twitch -q best -c --twitch-disable-hosting
 Recording twitch vod:
-recorder.py -n lirik -t vod -v 13245678
-Repairing recorded folder:
-recorder.py -n lirik -t repair
+recorder.py -n username -t vod -v 13245678
+Recording youtube stream:
+recorder.py -n name -t youtube -u url -q 720p -p /recording
+Repairing files in the recorded directory:
+recorder.py -n name -t repair
 ```
