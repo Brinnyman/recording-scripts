@@ -11,11 +11,11 @@ class Recorder:
     def __init__(self):
         self.twitch_client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this
         self.refresh = 15.0
-        self.name = ""  # recording directory name and twitch username
-        self.type = "twitch"  # recording type, default is 'twitch' [youtube, vod, repair]
+        self.name = ""  # recording directory and twitch username
+        self.type = "twitch"  # recording type, default is twitch <twitch, youtube, vod, repair>
         self.url = ""  # youtube-live-url
         self.vodid = ""  # twitch vod id
-        self.quality = "best"  # recording quality, default is 'best'
+        self.quality = "best"  # recording quality, default is best <best, high, low, medium, mobile, source, worst>
         self.root_path = ""  # recording path
         self.command = ""  # streamlink commands
         self.ffmpeg_path = 'ffmpeg'  # path to ffmpeg executable
@@ -166,22 +166,20 @@ def main(argv):
     usage = 'Usage: recorder.py [options]\n'
     usage += '\n'
     usage += 'Options:\n'
-    usage += '-h, --help prints this message\n'
-    usage += '-n, --name recording directory and twitch username\n'
-    usage += '-t, --type select the type of recording <twitch, youtube, vod, repair>\n'
-    usage += '-u, --url youtube url\n'
-    usage += '-v, --vod twitch vod id code\n'
-    usage += '-q, --quality quality file\n'
-    usage += '-p, --path filepath location\n'
+    usage += '-h, --help    prints this message\n'
+    usage += '-n, --name    recording directory and twitch username\n'
+    usage += '-t, --type    recording type, default is twitch <youtube, vod, repair>\n'
+    usage += '-u, --url     youtube url\n'
+    usage += '-v, --vod     twitch vod id\n'
+    usage += '-q, --quality recording quality, default is best\n'
+    usage += '-p, --path    recording path\n'
     usage += '-c, --command streamlink command\n'
     usage += '\n'
     usage += 'Examples:\n'
-    usage += 'Recording twitch stream:\nrecorder.py -n username\n'
-    usage += 'Recording twitch stream:\nrecorder.py -n username -p /recording\n'
-    usage += 'Recording twitch stream:\nrecorder.py -n username -c --twitch-disable-hosting\n'
+    usage += 'Recording twitch stream:\nrecorder.py -n username -t twitch -q best -c --twitch-disable-hosting\n'
     usage += 'Recording twitch vod:\nrecorder.py -n username -t vod -v 13245678\n'
-    usage += 'example recording youtube stream: recorder.py -n username -t youtube -u url -q 720p\n'
-    usage += 'Repairing recorded files:\nrecorder.py -n username -t repair'
+    usage += 'Recording youtube stream: recorder.py -n name -t youtube -u url -q 720p -p /recording\n'
+    usage += 'Repairing files in the recorded directory:\nrecorder.py -n name -t repair'
 
     try:
         options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:q:p:c:', ['name=',
