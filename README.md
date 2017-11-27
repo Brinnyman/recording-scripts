@@ -11,6 +11,14 @@ $ git clone git@github.com:Brinnyman/recording-scripts
 # Go into the repository
 $ cd recording-scripts
 
+# Install dependencies
+$ pip install -r requirements.txt
+
+# Configure the app
+self.root_path = ''  # recording path
+self.ffmpeg_path = ''  # path to ffmpeg executable
+self.streamlink_path = ''  # path to streamlink executable
+
 # Run the app
 $ python3.5 recorder.py [options]
 ```
@@ -25,14 +33,6 @@ Options:
 -q, --quality recording quality, default is best <best, high, low, medium, mobile, source, worst>
 -p, --path    recording path
 -c, --command streamlink command
-```
-
-## Configuration
-
-```
-self.root_path = ''  # recording path
-self.ffmpeg_path = ''  # path to ffmpeg executable
-self.streamlink_path = ''  # path to streamlink executable
 ```
 
 ## Examples
