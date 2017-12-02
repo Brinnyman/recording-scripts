@@ -56,8 +56,8 @@ class Recorder:
 
     def record(self, url, filename, command):
         print("Recording in session.")
-        print(self.streamlink_path, url, self.quality, "-o", filename, command)
-        subprocess.call([self.streamlink_path, url, self.quality, "-o", filename, command])
+        print(self.streamlink_path, command, url, self.quality, "-o", filename)
+        subprocess.call([self.streamlink_path, url, self.quality, "-o", filename])
         print("Recording is done.")
 
     def run(self):
