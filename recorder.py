@@ -54,10 +54,10 @@ class Recorder:
         else:
             print("Skip repairing. File not found.")
 
-    def record(self, url, filename, command):
+    def record(self, url, filename, *args):
         print("Recording in session.")
-        print(self.streamlink_path, command, url, self.quality, "-o", filename)
-        subprocess.call([self.streamlink_path, url, self.quality, "-o", filename])
+        print(self.streamlink_path, url, self.quality, "-o", filename, list(args))
+        subprocess.call([self.streamlink_path, url, self.quality, "-o", filename] + list(args))
         print("Recording is done.")
 
     def run(self):
@@ -148,13 +148,13 @@ class Recorder:
         info = self.check_twitch_vod()
         recorded_filename, processed_filename = self.create_files(info['channel']['name'], info['published_at'])
         self.url = 'twitch.tv/videos/' + self.vodid
-        self.record(self.url, recorded_filename, self.command)
+        self.record(self.url, recorded_filename)
         self.clean_files(recorded_filename, processed_filename)
 
     def record_youtube_stream(self):
         while True:
             recorded_filename, processed_filename = self.create_files('_' + self.name, datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
-            self.record(self.url, recorded_filename, self.command)
+            self.record(self.url, recorded_filename)
             self.clean_files(recorded_filename, processed_filename)
             time.sleep(self.refresh)
 
