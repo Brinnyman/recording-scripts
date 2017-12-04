@@ -16,7 +16,7 @@ class Recorder:
         self.url = ""  # youtube-live-url
         self.vodid = ""  # twitch vod id
         self.quality = "best"  # recording quality, default is best <best, high, low, medium, mobile, source, worst>
-        self.recordpath = ""  # recording path
+        self.recordpath = ""  # record path
         self.processpath = ""  # process path
         self.command = ""  # streamlink commands
         self.ffmpeg_path = 'ffmpeg'  # path to ffmpeg executable
@@ -167,29 +167,31 @@ def main(argv):
     usage = 'Usage: recorder.py [options]\n'
     usage += '\n'
     usage += 'Options:\n'
-    usage += '-h, --help    prints this message\n'
-    usage += '-n, --name    recording directory and twitch username\n'
-    usage += '-t, --type    recording type, default is twitch <youtube, vod, repair>\n'
-    usage += '-u, --url     youtube url\n'
-    usage += '-v, --vod     twitch vod id\n'
-    usage += '-q, --quality recording quality, default is best\n'
-    usage += '-p, --path    recording path\n'
-    usage += '-c, --command streamlink command\n'
+    usage += '-h, --help        prints this message\n'
+    usage += '-n, --name        recording directory and twitch username\n'
+    usage += '-t, --type        recording type, default is twitch <youtube, vod, repair>\n'
+    usage += '-u, --url         youtube url\n'
+    usage += '-v, --vod         twitch vod id\n'
+    usage += '-q, --quality     recording quality, default is best\n'
+    usage += '-r, --recordpath  record path\n'
+    usage += '-p, --processpath process path\n'
+    usage += '-c, --command     streamlink command\n'
     usage += '\n'
     usage += 'Examples:\n'
     usage += 'Recording twitch stream:\nrecorder.py -n username -t twitch -q best -c --twitch-disable-hosting\n'
     usage += 'Recording twitch vod:\nrecorder.py -n username -t vod -v 13245678\n'
-    usage += 'Recording youtube stream: recorder.py -n name -t youtube -u url -q 720p -p /recording\n'
-    usage += 'Repairing files in the recorded directory:\nrecorder.py -n name -t repair'
+    usage += 'Recording youtube stream: recorder.py -n name -t youtube -u url -q 720p -r /recording -p /processing\n'
+    usage += 'Repairing files in the recorded directory:\nrecorder.py -n name -t repair -r /recording -p /processing'
 
     try:
-        options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:q:p:c:', ['name=',
-                                                                             'url=',
-                                                                             'type=',
-                                                                             'vod=',
-                                                                             'quality=',
-                                                                             'path=',
-                                                                             'command='])
+        options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:q:r:p:c:', ['name=',
+                                                                               'url=',
+                                                                               'type=',
+                                                                               'vod=',
+                                                                               'quality=',
+                                                                               'recordpath=',
+                                                                               'processpath=',
+                                                                               'command='])
     except getopt.GetoptError as e:
         print(usage)
         sys.exit(2)
@@ -208,8 +210,10 @@ def main(argv):
             recorder.vodid = arg
         elif opt in ('-q', '--quality'):
             recorder.quality = arg
-        elif opt in ('-p', '--path'):
-            recorder.root_path = arg
+        elif opt in ('-r', '--recordpath'):
+            recorder.recordpath = arg
+        elif opt in ('-p', '--processpath'):
+            recorder.processpath = arg
         elif opt in ('-c', '--command'):
             recorder.command = arg
 
