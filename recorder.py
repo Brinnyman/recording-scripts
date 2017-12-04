@@ -16,16 +16,17 @@ class Recorder:
         self.url = ""  # youtube-live-url
         self.vodid = ""  # twitch vod id
         self.quality = "best"  # recording quality, default is best <best, high, low, medium, mobile, source, worst>
-        self.root_path = ""  # recording path
+        self.recordpath = ""  # recording path
+        self.processpath = ""  # process path
         self.command = ""  # streamlink commands
         self.ffmpeg_path = 'ffmpeg'  # path to ffmpeg executable
         self.streamlink_path = 'streamlink'  # path to streamlink executable
 
     def setup(self):
-        self.recorded_path = os.path.join(os.path.abspath(self.root_path), "recorded", self.name)
+        self.recorded_path = os.path.join(os.path.abspath(self.recordpath), "recorded", self.name)
         if(os.path.isdir(self.recorded_path) is False):
             os.makedirs(self.recorded_path)
-        self.processed_path = os.path.join(os.path.abspath(self.root_path), "processed", self.name)
+        self.processed_path = os.path.join(os.path.abspath(self.processpath), "processed", self.name)
         if(os.path.isdir(self.processed_path) is False):
             os.makedirs(self.processed_path)
 
