@@ -28,8 +28,8 @@ $ python3.5 recorder.py [options]
 Options:
 -h, --help        prints this message
 -n, --name        recording directory and twitch username
--t, --type        recording type, default is twitch <twitch, youtube, vod, repair>
--u, --url         youtube-live url
+-t, --type        recording type <twitch, vod, repair>
+-u, --url         url
 -v, --vod         twitch vod id
 -q, --quality     recording quality, default is best <best, high, low, medium, mobile, source, worst>
 -r, --recordpath  record path
@@ -41,12 +41,12 @@ Options:
 
 ```bash
 Examples:
+Recording stream:
+recorder.py -n name -u url -q 720p -r /recording -p /processing
+Repairing files:
+recorder.py -n name -t repair -r /recording -p /processing
 Recording twitch stream:
 recorder.py -n username -t twitch -q best -c --twitch-disable-hosting
 Recording twitch vod:
 recorder.py -n username -t vod -v 13245678
-Recording youtube stream:
-recorder.py -n name -t youtube -u url -q 720p -r /recording -p /processing
-Repairing files:
-recorder.py -n name -t repair -r /recording -p /processing
 ```

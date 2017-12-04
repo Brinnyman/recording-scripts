@@ -12,8 +12,8 @@ class Recorder:
         self.twitch_client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this
         self.refresh = 15.0
         self.name = ""  # recording directory and twitch username
-        self.type = "twitch"  # recording type, default is twitch <twitch, youtube, vod, repair>
-        self.url = ""  # youtube-live-url
+        self.type = ""  # recording type <twitch, vod, repair>
+        self.url = ""  # url
         self.vodid = ""  # twitch vod id
         self.quality = "best"  # recording quality, default is best <best, high, low, medium, mobile, source, worst>
         self.recordpath = ""  # record path
@@ -86,10 +86,8 @@ class Recorder:
             self.record_twitch_stream()
         elif self.type == 'vod':
             self.record_twitch_vod()
-        elif self.type == 'youtube':
-            self.record_youtube_stream()
         else:
-            return
+            self.record_stream()
 
     def check_twitch_stream(self):
         api = 'https://api.twitch.tv/kraken/streams/' + self.name
@@ -152,9 +150,9 @@ class Recorder:
         self.record(self.url, recorded_filename)
         self.clean_files(recorded_filename, processed_filename)
 
-    def record_youtube_stream(self):
+    def record_stream(self):
         while True:
-            recorded_filename, processed_filename = self.create_files('_' + self.name, datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
+            recorded_filename, processed_filename = self.create_files(self.name, datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
             self.record(self.url, recorded_filename)
             self.clean_files(recorded_filename, processed_filename)
             time.sleep(self.refresh)
@@ -169,8 +167,8 @@ def main(argv):
     usage += 'Options:\n'
     usage += '-h, --help        prints this message\n'
     usage += '-n, --name        recording directory and twitch username\n'
-    usage += '-t, --type        recording type, default is twitch <youtube, vod, repair>\n'
-    usage += '-u, --url         youtube url\n'
+    usage += '-t, --type        recording type <twitch, vod, repair>\n'
+    usage += '-u, --url         url\n'
     usage += '-v, --vod         twitch vod id\n'
     usage += '-q, --quality     recording quality, default is best\n'
     usage += '-r, --recordpath  record path\n'
@@ -178,10 +176,10 @@ def main(argv):
     usage += '-c, --command     streamlink command\n'
     usage += '\n'
     usage += 'Examples:\n'
+    usage += 'Recording stream: recorder.py -n name -u url -q 720p -r /recording -p /processing\n'
+    usage += 'Repairing files in the recorded directory:\nrecorder.py -n name -t repair -r /recording -p /processing'
     usage += 'Recording twitch stream:\nrecorder.py -n username -t twitch -q best -c --twitch-disable-hosting\n'
     usage += 'Recording twitch vod:\nrecorder.py -n username -t vod -v 13245678\n'
-    usage += 'Recording youtube stream: recorder.py -n name -t youtube -u url -q 720p -r /recording -p /processing\n'
-    usage += 'Repairing files in the recorded directory:\nrecorder.py -n name -t repair -r /recording -p /processing'
 
     try:
         options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:q:r:p:c:', ['name=',
