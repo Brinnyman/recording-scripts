@@ -45,11 +45,13 @@ class StreamRecorder:
             
             print('start streamlink')
             streamlink = [self.streamlink_path, url, self.quality, '--stdout'] + list(args)
+            print(streamlink)
             process = subprocess.Popen(streamlink, stdout=subprocess.PIPE, stderr=None)
 
             # TODO: -bsf h264_mp4toannexb? https://www.ffmpeg.org/ffmpeg-bitstream-filters.html#h264_005fmp4toannexb
             print('start ffmpeg')
             ffmpeg = [self.ffmpeg_path, '-i', 'pipe:0', '-vcodec', 'libx264', '-acodec', 'aac', '-f', 'mpegts', filename, '-loglevel', 'warning']
+            print(ffmpeg)
             process2 = subprocess.Popen(ffmpeg, stdin=process.stdout, stdout=subprocess.PIPE, stderr=None)
 
             process.stdout.close()
