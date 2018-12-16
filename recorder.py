@@ -85,10 +85,10 @@ class StreamRecorder:
             r.raise_for_status()
             info = r.json()
             if info['stream'] is None:
-                print("stream is offline")
+                print(self.name, "is currently offline, checking again in", self.refresh, "seconds.")
                 status = 0
             elif info['stream']['stream_type'] == 'live':
-                print("stream is online")			
+                print(self.name, "online. Start recording.")
                 status = 1
         except requests.exceptions.RequestException as e:
             if e.response:
