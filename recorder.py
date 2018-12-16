@@ -46,11 +46,12 @@ class StreamRecorder:
             print('start streamlink')
             streamlink = [self.streamlink_path, url, self.quality, '--stdout'] + list(args)
             print(streamlink)
+            # Streamlink output from Twitch is a TS data stream.
             process = subprocess.Popen(streamlink, stdout=subprocess.PIPE, stderr=None)
 
-            # TODO: -bsf h264_mp4toannexb? https://www.ffmpeg.org/ffmpeg-bitstream-filters.html#h264_005fmp4toannexb
+            # TODO: Test with -bsf h264_mp4toannexb
             print('start ffmpeg')
-            ffmpeg = [self.ffmpeg_path, '-i', 'pipe:0', '-vcodec', 'libx264', '-acodec', 'aac', '-f', 'mpegts', filename, '-loglevel', 'warning']
+            ffmpeg = [self.ffmpeg_path, '-i', 'pipe:0', '-bsf', 'h264_mp4toannexb', '-vcodec', 'libx264', '-acodec', 'aac', '-f', 'mpegts', filename, '-loglevel', 'quiet']
             print(ffmpeg)
             process2 = subprocess.Popen(ffmpeg, stdin=process.stdout, stdout=subprocess.PIPE, stderr=None)
 
