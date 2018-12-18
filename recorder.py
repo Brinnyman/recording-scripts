@@ -37,6 +37,12 @@ class StreamRecorder:
         filename = os.path.join(self.recorded_path, filename)
         return filename
 
+	# Streamlink pipes the stream data as input to the ffmpeg subprocess. Ffmpeg compresses the data to an mp4 file.
+	# When a stream goes offline, it gives an pipe error. Because the status still says the stream is online. Streamlink then gives and error that no playable stream is found. subprocess.CalledProcessError?
+	# Thus ffmpeg cant create a new file. Takes over 1min to finally show the status as offline. The actual stream is also still playing for a couple of seconds after the stream is stopped.
+
+	# It does take 1min to start the recording again. That is because of the status check. Also happends with the old script
+
     def record(self, url, filename, *args):
         process = None
 
@@ -46,15 +52,21 @@ class StreamRecorder:
             print('start streamlink')
             streamlink = [self.streamlink_path, url, self.quality, '--stdout'] + list(args)
             print(streamlink)
-            # Streamlink output from Twitch is a TS data stream.
             process = subprocess.Popen(streamlink, stdout=subprocess.PIPE, stderr=None)
 
-            # TODO: Test with -bsf h264_mp4toannexb
             print('start ffmpeg')
-            ffmpeg = [self.ffmpeg_path, '-i', 'pipe:0', '-bsf', 'h264_mp4toannexb', '-vcodec', 'libx264', '-acodec', 'aac', '-f', 'mpegts', filename, '-loglevel', 'quiet']
+            # TODO: Test with -bsf h264_mp4toannexb
+            # ffmpeg = [self.ffmpeg_path, '-i', 'pipe:0', '-bsf', 'h264_mp4toannexb', '-vcodec', 'libx264', '-acodec', 'aac', '-f', 'mpegts', filename]
+            # h26_mp4toannexb doesn't support aac
+
+            # TODO: Test with original parameters using the streamlink pipe
+            # Recording worked. Did give a message [stream.hls][warning] Failed to reload playlist: Unable to open URL: 
+            # Don't know what that is about.
+            ffmpeg = [self.ffmpeg_path, '-err_detect', 'ignore_err', '-i', 'pipe:0', '-c', 'copy', filename, '-loglevel', 'quiet']
             print(ffmpeg)
             process2 = subprocess.Popen(ffmpeg, stdin=process.stdout, stdout=subprocess.PIPE, stderr=None)
 
+            # TODO: Have to checkout what this does and if i need to close the second process.
             process.stdout.close()
             process2.communicate()
             print('Recording is done.')
@@ -78,6 +90,7 @@ class StreamRecorder:
             self.record_stream()
 
     def check_twitch_stream_status(self):
+        # TODO: is kraken still valid?
         api = 'https://api.twitch.tv/kraken/streams/' + self.name
         info = None
         status = 3  # 3: error
@@ -86,10 +99,8 @@ class StreamRecorder:
             r.raise_for_status()
             info = r.json()
             if info['stream'] is None:
-                print(self.name, "is currently offline, checking again in", self.refresh, "seconds.")
                 status = 0
-            elif info['stream']['stream_type'] == 'live':
-                print(self.name, "online. Start recording.")
+            elif info['stream']['stream_type'] == 'live':		
                 status = 1
         except requests.exceptions.RequestException as e:
             if e.response:
@@ -99,6 +110,7 @@ class StreamRecorder:
         return status
 
     def check_twitch_vod(self):
+        # TODO: is kraken still valid?
         api = 'https://api.twitch.tv/kraken/videos/' + self.vodid
         info = None
         r = requests.get(api, headers={"Client-ID": self.twitch_client_id}, timeout=15)
@@ -108,14 +120,17 @@ class StreamRecorder:
 
     def record_twitch_stream(self):
         self.streamlink_commands = "--twitch-disable-hosting"
+        print('check twitch stream status')
         while True:
-            print('check twitch stream status')
             status = self.check_twitch_stream_status()
             if status == 1:
+                print(self.name, "online.")
                 recorded_filename = self.create_filename(self.name, datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
                 self.url = 'twitch.tv/' + self.name
                 self.record(self.url, recorded_filename, self.streamlink_commands)
-                time.sleep(self.refresh)
+            
+            # TODO: sleep at the right position?
+            time.sleep(self.refresh)
 
     def record_twitch_vod(self):
         info = self.check_twitch_vod()
@@ -151,16 +166,18 @@ def main(argv):
     usage += 'Recording twitch stream:\nrecorder.py -n username -t twitch -q best -c --twitch-disable-hosting\n'
     usage += 'Recording twitch vod:\nrecorder.py -n username -t vod -v 13245678\n'
 
+    # TODO: remainder usage? 
     try:
-        options = getopt.getopt(sys.argv[1:], 'hn:u:t:v:q:r:p:c:', ['name=',
+        options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:q:r:p:c:', ['name=',
                                                                                'url=',
                                                                                'type=',
                                                                                'vod=',
                                                                                'quality=',
                                                                                'recordpath=',
                                                                                'command='])
+    # TODO: handel exception
     except getopt.GetoptError as e:
-        print(e, usage)
+        print(usage)
         sys.exit(2)
 
     for opt, arg in options:
@@ -183,6 +200,10 @@ def main(argv):
             recorder.command = arg
 
     recorder.run()
+
+# TODO: need a way to stop the program
+# TODO: would be cool to have a program as controlpanel that opens up a second 'terminal' to run the recording.
+# TODO: or streamlink writes to a file and after its done a second program start to process the file with ffmpeg. And let the streamlink program continue with its loop.
 
 if __name__ == "__main__":
     main(sys.argv[1:])
