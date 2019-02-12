@@ -9,7 +9,7 @@ import time
 
 class StreamRecorder:
     def __init__(self):
-        self.twitch_client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this TODO: Maybe change this because everybody uses this ID
+        self.twitch_client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this
         self.refresh = 15.0
         self.name = ""  # recording directory and twitch username
         self.type = ""  # recording type <twitch, vod, repair>
@@ -37,12 +37,6 @@ class StreamRecorder:
         filename = os.path.join(self.recorded_path, filename)
         return filename
 
-	# Streamlink pipes the stream data as input to the ffmpeg subprocess. Ffmpeg compresses the data to an mp4 file.
-	# When a stream goes offline, it gives an pipe error. Because the status still says the stream is online. Streamlink then gives and error that no playable stream is found. subprocess.CalledProcessError?
-	# Thus ffmpeg cant create a new file. Takes over 1min to finally show the status as offline. The actual stream is also still playing for a couple of seconds after the stream is stopped.
-
-	# It does take 1min to start the recording again. That is because of the status check. Also happends with the old script
-
     def record(self, url, filename, *args):
         process = None
 
@@ -55,18 +49,10 @@ class StreamRecorder:
             process = subprocess.Popen(streamlink, stdout=subprocess.PIPE, stderr=None)
 
             print('start ffmpeg')
-            # TODO: Test with -bsf h264_mp4toannexb
-            # ffmpeg = [self.ffmpeg_path, '-i', 'pipe:0', '-bsf', 'h264_mp4toannexb', '-vcodec', 'libx264', '-acodec', 'aac', '-f', 'mpegts', filename]
-            # h26_mp4toannexb doesn't support aac
-
-            # TODO: Test with original parameters using the streamlink pipe
-            # Recording worked. Did give a message [stream.hls][warning] Failed to reload playlist: Unable to open URL: 
-            # Don't know what that is about.
             ffmpeg = [self.ffmpeg_path, '-err_detect', 'ignore_err', '-i', 'pipe:0', '-c', 'copy', filename, '-loglevel', 'quiet']
             print(ffmpeg)
             process2 = subprocess.Popen(ffmpeg, stdin=process.stdout, stdout=subprocess.PIPE, stderr=None)
 
-            # TODO: Have to checkout what this does and if i need to close the second process.
             process.stdout.close()
             process2.communicate()
             print('Recording is done.')
@@ -75,7 +61,6 @@ class StreamRecorder:
             print('An error has occurred while trying to use livestreamer package. Is it installed? Do you have Python in your PATH variable?')
             sys.exit(1)
 
-        # TODO: remove stdout?
         return process2.stdout
 
     def run(self):
@@ -118,7 +103,7 @@ class StreamRecorder:
 
     def record_twitch_stream(self):
         self.streamlink_commands = "--twitch-disable-hosting"
-        print('check twitch stream status')
+        print('check channel {0} stream status'.format(self.name))
         while True:
             status = self.check_twitch_stream_status()
             if status == 1:
@@ -202,10 +187,6 @@ def main(argv):
             recorder.command = arg
 
     recorder.run()
-
-# TODO: need a way to stop the program
-# TODO: would be cool to have a program as controlpanel that opens up a second 'terminal' to run the recording.
-# TODO: or streamlink writes to a file and after its done a second program start to process the file with ffmpeg. And let the streamlink program continue with its loop.
 
 if __name__ == "__main__":
     main(sys.argv[1:])
