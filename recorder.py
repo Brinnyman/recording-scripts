@@ -159,13 +159,16 @@ def main(argv):
     usage += '-c, --command     streamlink command\n'
     usage += '\n'
     usage += 'Examples:\n'
-    usage += 'Recording stream: recorder.py -n name -u url -r /recordpath\n'
-    usage += 'Recording stream: recorder.py -n name -u url -q 720p -r /recordpath\n'
-    usage += 'Recording stream: recorder.py -n name -u url -q best -r /recordpath\n'
-    usage += 'Recording twitch stream:\nrecorder.py -n username -t twitch -c --twitch-disable-hosting\n'
-    usage += 'Recording twitch stream:\nrecorder.py -n username -t twitch -q 1080p60 -c --twitch-disable-hosting\n'
-    usage += 'Recording twitch stream:\nrecorder.py -n username -t twitch -q best -c --twitch-disable-hosting\n'
-    usage += 'Recording twitch vod:\nrecorder.py -n username -t vod -v 13245678\n'
+    usage += 'Recording stream:\nrecorder.py -n name -u url -r /recordpath\n'
+    usage += 'recorder.py -n name -u url -r /recordpath\n'
+    usage += 'recorder.py -n name -u url -q 720p -r /recordpath\n'
+    usage += 'recorder.py -n name -u url -q best -r /recordpath\n\n'
+    usage += 'Recording twitch stream:\n'
+    usage += 'recorder.py -n username -t twitch -c --twitch-disable-hosting\n'
+    usage += 'recorder.py -n username -t twitch -q 1080p60 -c --twitch-disable-hosting\n'
+    usage += 'recorder.py -n username -t twitch -q best -c --twitch-disable-hosting\n\n'
+    usage += 'Recording twitch vod:\n'
+    usage += 'recorder.py -n username -t vod -v 13245678\n'
 
     try:
         options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:q:r:p:c:', ['name=',
