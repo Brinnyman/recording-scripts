@@ -10,7 +10,7 @@ import configparser
 class StreamRecorder:
     def __init__(self):
         config = configparser.ConfigParser()
-        config.read('config.ini')
+        config.read(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'config.ini'))
 
         self.refresh = int(config['SETUP']['REFRESH_RATE'])
         self.name = config['SETUP']['NAME']
