@@ -30,7 +30,7 @@ Options:
 -t, --type        recording type <twitch, vod>
 -u, --url         url
 -v, --vod         twitch vod id
--q, --quality     recording quality, first that is available <720p, 720p60, 1080p, 1080p60>. You can override these by providing the quality or pick the default Streamlink settings <best> or <worst>.
+-q, --quality     recording quality, first that is available <720p, 720p60, 1080p, 1080p60, best>. You can override these by providing the quality or pick the default Streamlink settings <best> or <worst>.
 -r, --recordpath  recordpath
 -c, --command     streamlink command
 ```

@@ -15,7 +15,7 @@ class StreamRecorder:
         self.type = ""  # recording type <twitch, vod, repair>
         self.url = ""  # url
         self.vodid = ""  # twitch vod id
-        self.quality = "720p, 720p60, 1080p, 1080p60"  # recording quality, first that is available <720p, 720p60, 1080p, 1080p60>. You can override these by providing the quality or pick the default streamlink settings <best> or <worst>.
+        self.quality = "720p, 720p60, 1080p, 1080p60, best"  # recording quality, first that is available <720p, 720p60, 1080p, 1080p60>. You can override these by providing the quality or pick the default streamlink settings <best> or <worst>.
         self.recordpath = ""  # record path
         self.streamlink_commands = ""  # streamlink commands
         self.ffmpeg_path = 'ffmpeg'  # path to ffmpeg executable
@@ -139,7 +139,7 @@ def main(argv):
     usage += '-t, --type        recording type <twitch, vod>\n'
     usage += '-u, --url         url\n'
     usage += '-v, --vod         twitch vod id\n'
-    usage += '-q, --quality     recording quality, first that is available <720p, 720p60, 1080p, 1080p60>. You can override these by providing the quality or pick the default Streamlink settings <best> or <worst>.\n'
+    usage += '-q, --quality     recording quality, first that is available <720p, 720p60, 1080p, 1080p60, best>. You can override these by providing the quality or pick the default Streamlink settings <best> or <worst>.\n'
     usage += '-r, --recordpath  recordpath\n'
     usage += '-c, --command     streamlink command\n'
     usage += '\n'
