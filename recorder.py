@@ -15,7 +15,7 @@ class StreamRecorder:
         self.type = ""  # recording type <twitch, vod, repair>
         self.url = ""  # url
         self.vodid = ""  # twitch vod id
-        self.quality = "best"  # recording quality, default is best <best, high, low, medium, mobile, source, worst>
+        self.quality = "720p, 720p60, 1080p, 1080p60"  # recording quality, first that is available <720p, 720p60, 1080p, 1080p60>. You can override these by providing the quality or pick the default streamlink settings <best> or <worst>.
         self.recordpath = ""  # record path
         self.streamlink_commands = ""  # streamlink commands
         self.ffmpeg_path = 'ffmpeg'  # path to ffmpeg executable
@@ -90,7 +90,6 @@ class StreamRecorder:
             self.record_stream()
 
     def check_twitch_stream_status(self):
-        # TODO: is kraken still valid?
         api = 'https://api.twitch.tv/kraken/streams/' + self.name
         info = None
         status = 3  # 3: error
@@ -110,7 +109,6 @@ class StreamRecorder:
         return status
 
     def check_twitch_vod(self):
-        # TODO: is kraken still valid?
         api = 'https://api.twitch.tv/kraken/videos/' + self.vodid
         info = None
         r = requests.get(api, headers={"Client-ID": self.twitch_client_id}, timeout=15)
@@ -129,7 +127,6 @@ class StreamRecorder:
                 self.url = 'twitch.tv/' + self.name
                 self.record(self.url, recorded_filename, self.streamlink_commands)
             
-            # TODO: sleep at the right position?
             time.sleep(self.refresh)
 
     def record_twitch_vod(self):
@@ -157,16 +154,19 @@ def main(argv):
     usage += '-t, --type        recording type <twitch, vod>\n'
     usage += '-u, --url         url\n'
     usage += '-v, --vod         twitch vod id\n'
-    usage += '-q, --quality     recording quality, default is best\n'
-    usage += '-r, --recordpath  record path\n'
+    usage += '-q, --quality     recording quality, first that is available <720p, 720p60, 1080p, 1080p60>. You can override these by providing the quality or pick the default Streamlink settings <best> or <worst>.\n'
+    usage += '-r, --recordpath  recordpath\n'
     usage += '-c, --command     streamlink command\n'
     usage += '\n'
     usage += 'Examples:\n'
-    usage += 'Recording stream: recorder.py -n name -u url -q 720p -r /recording\n'
+    usage += 'Recording stream: recorder.py -n name -u url -r /recordpath\n'
+    usage += 'Recording stream: recorder.py -n name -u url -q 720p -r /recordpath\n'
+    usage += 'Recording stream: recorder.py -n name -u url -q best -r /recordpath\n'
+    usage += 'Recording twitch stream:\nrecorder.py -n username -t twitch -c --twitch-disable-hosting\n'
+    usage += 'Recording twitch stream:\nrecorder.py -n username -t twitch -q 1080p60 -c --twitch-disable-hosting\n'
     usage += 'Recording twitch stream:\nrecorder.py -n username -t twitch -q best -c --twitch-disable-hosting\n'
     usage += 'Recording twitch vod:\nrecorder.py -n username -t vod -v 13245678\n'
 
-    # TODO: remainder usage? 
     try:
         options, remainder = getopt.getopt(sys.argv[1:], 'hn:u:t:v:q:r:p:c:', ['name=',
                                                                                'url=',
@@ -175,7 +175,6 @@ def main(argv):
                                                                                'quality=',
                                                                                'recordpath=',
                                                                                'command='])
-    # TODO: handel exception
     except getopt.GetoptError as e:
         print(usage)
         sys.exit(2)
