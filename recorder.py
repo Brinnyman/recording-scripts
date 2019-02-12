@@ -5,21 +5,24 @@ import requests
 import datetime
 import subprocess
 import time
-
+import configparser
 
 class StreamRecorder:
     def __init__(self):
-        self.twitch_client_id = "jzkbprff40iqj646a697cyrvl0zt2m6"  # don't change this
-        self.refresh = 15.0
-        self.name = ""  # recording directory and twitch username
-        self.type = ""  # recording type <twitch, vod, repair>
-        self.url = ""  # url
-        self.vodid = ""  # twitch vod id
-        self.quality = "720p, 720p60, 1080p, 1080p60, best"  # recording quality, first that is available <720p, 720p60, 1080p, 1080p60>. You can override these by providing the quality or pick the default streamlink settings <best> or <worst>.
-        self.recordpath = ""  # record path
-        self.streamlink_commands = ""  # streamlink commands
-        self.ffmpeg_path = 'ffmpeg'  # path to ffmpeg executable
-        self.streamlink_path = 'streamlink'  # path to streamlink executable
+        config = configparser.ConfigParser()
+        config.read('config.ini')
+
+        self.refresh = int(config['SETUP']['REFRESH_RATE'])
+        self.name = config['SETUP']['NAME']
+        self.type = config['SETUP']['TYPE']
+        self.url = config['SETUP']['URL']
+        self.recordpath = config['SETUP']['RECORD_PATH']
+        self.streamlink_path = config['STREAMLINK']['STREAMLINK_PATH']
+        self.quality = config['STREAMLINK']['STREAMLINK_QUALITY']
+        self.streamlink_commands = config['STREAMLINK']['STREAMLINK_COMMANDS']
+        self.ffmpeg_path = config['FFMPEG']['FFMPEG_PATH']
+        self.twitch_client_id = config['TWITCH']['TWITCH_CLIENT_ID']
+        self.vodid = config['TWITCH']['VOD_ID']
 
     def create_directory(self):
         self.recorded_path = os.path.join(os.path.abspath(self.recordpath), "recorded", self.name)

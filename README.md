@@ -15,9 +15,7 @@ $ cd recording-scripts
 $ pip install -r requirements.txt
 
 # Configure the app
-self.recordpath = ''  # recording path
-self.ffmpeg_path = ''  # path to ffmpeg executable
-self.streamlink_path = ''  # path to streamlink executable
+Edit the config.ini file
 
 # Run the app
 $ python recorder.py [options]
